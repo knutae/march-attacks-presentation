@@ -7,8 +7,15 @@ float origin_sphere(vec3 p, float radius) {
     return length(p) - radius;
 }
 
+float sphere_at(vec3 p, vec3 centre, float radius) {
+    return origin_sphere(p - centre, radius);
+}
+
 float scene(vec3 p) {
-    return origin_sphere(p, 0.5);
+    float dist = origin_sphere(p, 0.3);
+    dist = min(dist, sphere_at(p, vec3(-0.6, 0.0, 0.0), 0.25));
+    dist = min(dist, sphere_at(p, vec3(0.6, 0.0, 0.0), 0.25));
+    return dist;
 }
 
 vec3 ray_march(vec3 start_pos, vec3 direction) {
