@@ -53,12 +53,14 @@ material scene_material(vec3 p) {
 }
 
 bool ray_march(inout vec3 p, vec3 direction) {
+    float total_dist = 0.0;
     for (int i = 0; i < 40; i++) {
         float dist = scene(p);
         if (dist < 0.01) {
             return true;
         }
-        if (dist > 10.0) {
+        total_dist += dist;
+        if (total_dist > 10.0) {
             return false;
         }
         p += direction * dist;
