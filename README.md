@@ -118,6 +118,83 @@ void main() {
 
 ## Normals and phong lightning
 
+Quickly explain the [Phong lighting model](https://en.wikipedia.org/wiki/Phong_reflection_model).
+
+We need a way to calculate surface normals.
+
+```glsl
+vec3 estimate_normal(vec3 p) {
+    float epsilon = 0.01;
+    return normalize(vec3(
+        scene(vec3(p.x + epsilon, p.y, p.z)) - scene(vec3(p.x - epsilon, p.y, p.z)),
+        scene(vec3(p.x, p.y + epsilon, p.z)) - scene(vec3(p.x, p.y - epsilon, p.z)),
+        scene(vec3(p.x, p.y, p.z + epsilon)) - scene(vec3(p.x, p.y, p.z - epsilon))
+    ));
+}
+```
+
+Define a material.
+
+```glsl
+struct material {
+    float ambient;
+    float diffuse;
+    float specular;
+    vec3 color;
+};
+
+const material sphere_material = material(0.8, 0.2, 1.0, vec3(0.5, 0.5, 1.0));
+```
+
+Change the `ray_march` function to detect the position.
+
+```glsl
+bool ray_march(inout vec3 p, vec3 direction) {
+    for (int i = 0; i < 20; i++) {
+        float dist = scene(p);
+        if (dist < 0.01) {
+            return true;
+        }
+        if (dist > 10.0) {
+            return false;
+        }
+        p += direction * dist;
+    }
+    return false;
+}
+```
+
+Add a dummy `phong_lighting` function and use it from `main`.
+
+```glsl
+vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
+    return vec3(1.0); // FIXME
+}
+
+void main() {
+    float u = vTexCoord.x - 1.0;
+    float v = (vTexCoord.y - 1.0) / uAspect;
+    float eye_distance = 2.0;
+    float rotation_speed = 2.0;
+    vec3 eye_position = vec3(
+        sin(uTime * rotation_speed) * eye_distance,
+        1.0 + sin(uTime) * 0.2,
+        cos(uTime * rotation_speed) * eye_distance);
+    vec3 forward = normalize(-eye_position);
+    vec3 up = vec3(0.0, 1.0, 0.0);
+    vec3 right = cross(up, forward);
+    float focal_length = 1.0;
+    vec3 start_pos = eye_position + forward * focal_length + right * u + up * v;
+    vec3 direction = normalize(start_pos - eye_position);
+    vec3 p = start_pos;
+    vec3 color = vec3(0.0);
+    if (ray_march(p, direction)) {
+        color = phong_lighting(p, sphere_material, direction);
+    }
+    gl_FragColor = vec4(color, 1.0);
+}
+```
+
 ## Add plane
 
 ## Different materials

@@ -3,6 +3,15 @@ varying vec2 vTexCoord;
 uniform float uAspect;
 uniform float uTime;
 
+struct material {
+    float ambient;
+    float diffuse;
+    float specular;
+    vec3 color;
+};
+
+const material sphere_material = material(0.8, 0.2, 1.0, vec3(0.5, 0.5, 1.0));
+
 float origin_sphere(vec3 p, float radius) {
     return length(p) - radius;
 }
@@ -18,21 +27,31 @@ float scene(vec3 p) {
     return dist;
 }
 
-vec3 ray_march(vec3 start_pos, vec3 direction) {
-    vec3 p = start_pos;
-    float hit_color = 1.0;
+bool ray_march(inout vec3 p, vec3 direction) {
     for (int i = 0; i < 20; i++) {
         float dist = scene(p);
         if (dist < 0.01) {
-            return vec3(hit_color);
+            return true;
         }
         if (dist > 10.0) {
-            break;
+            return false;
         }
         p += direction * dist;
-        hit_color -= 0.05;
     }
-    return vec3(0.0);
+    return false;
+}
+
+vec3 estimate_normal(vec3 p) {
+    float epsilon = 0.01;
+    return normalize(vec3(
+        scene(vec3(p.x + epsilon, p.y, p.z)) - scene(vec3(p.x - epsilon, p.y, p.z)),
+        scene(vec3(p.x, p.y + epsilon, p.z)) - scene(vec3(p.x, p.y - epsilon, p.z)),
+        scene(vec3(p.x, p.y, p.z + epsilon)) - scene(vec3(p.x, p.y, p.z - epsilon))
+    ));
+}
+
+vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
+    return vec3(1.0); // FIXME
 }
 
 void main() {
@@ -50,6 +69,10 @@ void main() {
     float focal_length = 1.0;
     vec3 start_pos = eye_position + forward * focal_length + right * u + up * v;
     vec3 direction = normalize(start_pos - eye_position);
-    vec3 color = ray_march(start_pos, direction);
+    vec3 p = start_pos;
+    vec3 color = vec3(0.0);
+    if (ray_march(p, direction)) {
+        color = phong_lighting(p, sphere_material, direction);
+    }
     gl_FragColor = vec4(color, 1.0);
 }
