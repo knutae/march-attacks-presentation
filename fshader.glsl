@@ -81,19 +81,29 @@ vec3 ray_reflection(vec3 direction, vec3 normal) {
     return 2.0 * dot(-direction, normal) * normal + direction;
 }
 
-float shadow_multiplier(vec3 p, vec3 light_direction) {
-    p = p - light_direction * 0.05;
-    if (ray_march(p, -light_direction)) {
-        return 0.0;
-    } else {
-        return 1.0;
+float soft_shadow(vec3 p, vec3 light_direction, float sharpness) {
+    p += light_direction * 0.1;
+    float total_dist = 0.1;
+    float res = 1.0;
+    for (int i = 0; i < 20; i++) {
+        float dist = scene(p);
+        if (dist < 0.01) {
+            return 0.0;
+        }
+        total_dist += dist;
+        res = min(res, sharpness * dist / total_dist);
+        if (total_dist > 10.0) {
+            break;
+        }
+        p += light_direction * dist;
     }
+    return res;
 }
 
 vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
     vec3 normal = estimate_normal(p);
     vec3 light_direction = normalize(vec3(-1.0));
-    float shadow = shadow_multiplier(p, light_direction);
+    float shadow = soft_shadow(p, -light_direction, 5.0);
     float diffuse = max(0.0, mat.diffuse * dot(normal, -light_direction)) * shadow;
     vec3 reflection = ray_reflection(ray_direction, normal);
     float specular = pow(max(0.0, mat.specular * dot(reflection, -light_direction)), mat.shininess) * shadow;
