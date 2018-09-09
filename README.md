@@ -195,8 +195,6 @@ void main() {
 }
 ```
 
-Implement diffuse and ambient parts.
-
 Diffuse lighting is calculated using the dot product of the normal and the direction towards the light.
 
 ```glsl
@@ -205,6 +203,23 @@ vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
     vec3 light_direction = normalize(vec3(-1.0));
     float diffuse = max(0.0, mat.diffuse * dot(normal, -light_direction));
     return mat.color * (diffuse + mat.ambient);
+}
+```
+
+Specular lighting is calculated by reflecting the ray and then taking the dot product with the direction towards the light.
+
+```glsl
+vec3 ray_reflection(vec3 direction, vec3 normal) {
+    return 2.0 * dot(-direction, normal) * normal + direction;
+}
+
+vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
+    vec3 normal = estimate_normal(p);
+    vec3 light_direction = normalize(vec3(-1.0));
+    float diffuse = max(0.0, mat.diffuse * dot(normal, -light_direction));
+    vec3 reflection = ray_reflection(ray_direction, normal);
+    float specular = max(0.0, mat.specular * dot(reflection, -light_direction));
+    return mat.color * (diffuse + mat.ambient) + vec3(specular);
 }
 ```
 

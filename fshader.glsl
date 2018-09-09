@@ -10,7 +10,7 @@ struct material {
     vec3 color;
 };
 
-const material sphere_material = material(0.1, 0.9, 1.0, vec3(0.5, 0.5, 1.0));
+const material sphere_material = material(0.1, 0.9, 0.3, vec3(0.5, 0.5, 1.0));
 
 float origin_sphere(vec3 p, float radius) {
     return length(p) - radius;
@@ -50,11 +50,17 @@ vec3 estimate_normal(vec3 p) {
     ));
 }
 
+vec3 ray_reflection(vec3 direction, vec3 normal) {
+    return 2.0 * dot(-direction, normal) * normal + direction;
+}
+
 vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
     vec3 normal = estimate_normal(p);
     vec3 light_direction = normalize(vec3(-1.0));
     float diffuse = max(0.0, mat.diffuse * dot(normal, -light_direction));
-    return mat.color * (diffuse + mat.ambient);
+    vec3 reflection = ray_reflection(ray_direction, normal);
+    float specular = max(0.0, mat.specular * dot(reflection, -light_direction));
+    return mat.color * (diffuse + mat.ambient) + vec3(specular);
 }
 
 void main() {
