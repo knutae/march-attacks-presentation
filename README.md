@@ -143,7 +143,7 @@ struct material {
     vec3 color;
 };
 
-const material sphere_material = material(0.8, 0.2, 1.0, vec3(0.5, 0.5, 1.0));
+const material sphere_material = material(0.1, 0.9, 1.0, vec3(0.5, 0.5, 1.0));
 ```
 
 Change the `ray_march` function to detect the position.
@@ -192,6 +192,17 @@ void main() {
         color = phong_lighting(p, sphere_material, direction);
     }
     gl_FragColor = vec4(color, 1.0);
+}
+```
+
+Implement diffuse and ambient parts.
+
+```glsl
+vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
+    vec3 normal = estimate_normal(p);
+    vec3 light_direction = normalize(vec3(1.0));
+    float diffuse = max(0.0, mat.diffuse * dot(normal, light_direction));
+    return mat.color * (diffuse + mat.ambient);
 }
 ```
 
