@@ -259,6 +259,17 @@ const material blue_sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 0.5
 const material green_sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 1.0, 0.5));
 const material red_sphere_material = material(0.1, 0.9, 0.8, 10.0, vec3(1.0, 0.5, 0.5));
 
+float blue_sphere(vec3 p) { return origin_sphere(p, 0.3); }
+float green_sphere(vec3 p) { return sphere_at(p, vec3(-0.6, -0.05, 0.0), 0.25); }
+float red_sphere(vec3 p) { return sphere_at(p, vec3(0.6, -0.05, 0.0), 0.25); }
+
+float scene(vec3 p) {
+    float dist = blue_sphere(p);
+    dist = min(dist, green_sphere(p));
+    dist = min(dist, red_sphere(p));
+    return dist;
+}
+
 void closest_material(inout float dist, inout material mat, float new_dist, material new_mat) {
     if (new_dist < dist) {
         dist = new_dist;
@@ -267,10 +278,10 @@ void closest_material(inout float dist, inout material mat, float new_dist, mate
 }
 
 material scene_material(vec3 p) {
-    float dist = origin_sphere(p, 0.3);
+    float dist = blue_sphere(p);
     material mat = blue_sphere_material;
-    closest_material(dist, mat, sphere_at(p, vec3(-0.6, 0.0, 0.0), 0.25), green_sphere_material);
-    closest_material(dist, mat, sphere_at(p, vec3(0.6, 0.0, 0.0), 0.25), red_sphere_material);
+    closest_material(dist, mat, green_sphere(p), green_sphere_material);
+    closest_material(dist, mat, red_sphere(p), red_sphere_material);
     return mat;
 }
 ```
@@ -286,24 +297,24 @@ material scene_material(vec3 p) {
 ```glsl
 const material floor_material = material(0.1, 0.9, 0.8, 10.0, vec3(1.0));
 
-float floor(vec3 p, float height) {
+float horizontal_plane(vec3 p, float height) {
     return p.y - height;
 }
 
 float scene(vec3 p) {
-    float dist = origin_sphere(p, 0.3);
-    dist = min(dist, sphere_at(p, vec3(-0.6, 0.0, 0.0), 0.25));
-    dist = min(dist, sphere_at(p, vec3(0.6, 0.0, 0.0), 0.25));
-    dist = min(dist, floor(p, -0.3));
+    float dist = blue_sphere(p);
+    dist = min(dist, green_sphere(p));
+    dist = min(dist, red_sphere(p));
+    dist = min(dist, floor_plane(p));
     return dist;
 }
 
 material scene_material(vec3 p) {
-    float dist = origin_sphere(p, 0.3);
+    float dist = blue_sphere(p);
     material mat = blue_sphere_material;
-    closest_material(dist, mat, sphere_at(p, vec3(-0.6, 0.0, 0.0), 0.25), green_sphere_material);
-    closest_material(dist, mat, sphere_at(p, vec3(0.6, 0.0, 0.0), 0.25), red_sphere_material);
-    closest_material(dist, mat, floor(p, -0.3), floor_material);
+    closest_material(dist, mat, green_sphere(p), green_sphere_material);
+    closest_material(dist, mat, red_sphere(p), red_sphere_material);
+    closest_material(dist, mat, floor_plane(p), floor_material);
     return mat;
 }
 ```
