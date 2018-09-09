@@ -14,6 +14,7 @@ struct material {
 const material blue_sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 0.5, 1.0));
 const material green_sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 1.0, 0.5));
 const material red_sphere_material = material(0.1, 0.9, 0.8, 10.0, vec3(1.0, 0.5, 0.5));
+const material floor_material = material(0.1, 0.9, 0.8, 10.0, vec3(1.0));
 
 float origin_sphere(vec3 p, float radius) {
     return length(p) - radius;
@@ -23,10 +24,15 @@ float sphere_at(vec3 p, vec3 centre, float radius) {
     return origin_sphere(p - centre, radius);
 }
 
+float floor(vec3 p, float height) {
+    return p.y - height;
+}
+
 float scene(vec3 p) {
     float dist = origin_sphere(p, 0.3);
     dist = min(dist, sphere_at(p, vec3(-0.6, 0.0, 0.0), 0.25));
     dist = min(dist, sphere_at(p, vec3(0.6, 0.0, 0.0), 0.25));
+    dist = min(dist, floor(p, -0.3));
     return dist;
 }
 
@@ -42,11 +48,12 @@ material scene_material(vec3 p) {
     material mat = blue_sphere_material;
     closest_material(dist, mat, sphere_at(p, vec3(-0.6, 0.0, 0.0), 0.25), green_sphere_material);
     closest_material(dist, mat, sphere_at(p, vec3(0.6, 0.0, 0.0), 0.25), red_sphere_material);
+    closest_material(dist, mat, floor(p, -0.3), floor_material);
     return mat;
 }
 
 bool ray_march(inout vec3 p, vec3 direction) {
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 40; i++) {
         float dist = scene(p);
         if (dist < 0.01) {
             return true;

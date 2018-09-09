@@ -279,7 +279,32 @@ material scene_material(vec3 p) {
     }
 ```
 
-## Add plane
+## Add floor plane
+
+```glsl
+const material floor_material = material(0.1, 0.9, 0.8, 10.0, vec3(1.0));
+
+float floor(vec3 p, float height) {
+    return p.y - height;
+}
+
+float scene(vec3 p) {
+    float dist = origin_sphere(p, 0.3);
+    dist = min(dist, sphere_at(p, vec3(-0.6, 0.0, 0.0), 0.25));
+    dist = min(dist, sphere_at(p, vec3(0.6, 0.0, 0.0), 0.25));
+    dist = min(dist, floor(p, -0.3));
+    return dist;
+}
+
+material scene_material(vec3 p) {
+    float dist = origin_sphere(p, 0.3);
+    material mat = blue_sphere_material;
+    closest_material(dist, mat, sphere_at(p, vec3(-0.6, 0.0, 0.0), 0.25), green_sphere_material);
+    closest_material(dist, mat, sphere_at(p, vec3(0.6, 0.0, 0.0), 0.25), red_sphere_material);
+    closest_material(dist, mat, floor(p, -0.3), floor_material);
+    return mat;
+}
+```
 
 ## Shadows
 
