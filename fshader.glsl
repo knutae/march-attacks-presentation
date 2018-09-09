@@ -52,8 +52,8 @@ vec3 estimate_normal(vec3 p) {
 
 vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
     vec3 normal = estimate_normal(p);
-    vec3 light_direction = normalize(vec3(1.0));
-    float diffuse = max(0.0, mat.diffuse * dot(normal, light_direction));
+    vec3 light_direction = normalize(vec3(-1.0));
+    float diffuse = max(0.0, mat.diffuse * dot(normal, -light_direction));
     return mat.color * (diffuse + mat.ambient);
 }
 
