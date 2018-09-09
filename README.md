@@ -248,9 +248,38 @@ vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
 }
 ```
 
-## Add plane
-
 ## Different materials
+
+Calculate different materials by duplicating scene code. Not elegant, but works.
+
+```glsl
+const material blue_sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 0.5, 1.0));
+const material green_sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 1.0, 0.5));
+const material red_sphere_material = material(0.1, 0.9, 0.8, 10.0, vec3(1.0, 0.5, 0.5));
+
+void closest_material(inout float dist, inout material mat, float new_dist, material new_mat) {
+    if (new_dist < dist) {
+        dist = new_dist;
+        mat = new_mat;
+    }
+}
+
+material scene_material(vec3 p) {
+    float dist = origin_sphere(p, 0.3);
+    material mat = blue_sphere_material;
+    closest_material(dist, mat, sphere_at(p, vec3(-0.6, 0.0, 0.0), 0.25), green_sphere_material);
+    closest_material(dist, mat, sphere_at(p, vec3(0.6, 0.0, 0.0), 0.25), red_sphere_material);
+    return mat;
+}
+```
+
+```glsl
+    if (ray_march(p, direction)) {
+        color = phong_lighting(p, scene_material(p), direction);
+    }
+```
+
+## Add plane
 
 ## Shadows
 

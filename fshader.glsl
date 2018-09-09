@@ -11,7 +11,9 @@ struct material {
     vec3 color;
 };
 
-const material sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 0.5, 1.0));
+const material blue_sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 0.5, 1.0));
+const material green_sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 1.0, 0.5));
+const material red_sphere_material = material(0.1, 0.9, 0.8, 10.0, vec3(1.0, 0.5, 0.5));
 
 float origin_sphere(vec3 p, float radius) {
     return length(p) - radius;
@@ -26,6 +28,21 @@ float scene(vec3 p) {
     dist = min(dist, sphere_at(p, vec3(-0.6, 0.0, 0.0), 0.25));
     dist = min(dist, sphere_at(p, vec3(0.6, 0.0, 0.0), 0.25));
     return dist;
+}
+
+void closest_material(inout float dist, inout material mat, float new_dist, material new_mat) {
+    if (new_dist < dist) {
+        dist = new_dist;
+        mat = new_mat;
+    }
+}
+
+material scene_material(vec3 p) {
+    float dist = origin_sphere(p, 0.3);
+    material mat = blue_sphere_material;
+    closest_material(dist, mat, sphere_at(p, vec3(-0.6, 0.0, 0.0), 0.25), green_sphere_material);
+    closest_material(dist, mat, sphere_at(p, vec3(0.6, 0.0, 0.0), 0.25), red_sphere_material);
+    return mat;
 }
 
 bool ray_march(inout vec3 p, vec3 direction) {
@@ -82,7 +99,7 @@ void main() {
     vec3 p = start_pos;
     vec3 color = vec3(0.0);
     if (ray_march(p, direction)) {
-        color = phong_lighting(p, sphere_material, direction);
+        color = phong_lighting(p, scene_material(p), direction);
     }
     gl_FragColor = vec4(color, 1.0);
 }
