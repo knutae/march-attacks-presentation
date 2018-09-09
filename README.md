@@ -77,6 +77,22 @@ float scene(vec3 p) {
 
 ## Perspective projection
 
+```glsl
+void main() {
+    float u = vTexCoord.x - 1.0;
+    float v = (vTexCoord.y - 1.0) / uAspect;
+    vec3 eye_position = vec3(0.0, 0.0, -1.0);
+    vec3 forward = normalize(-eye_position);
+    vec3 up = vec3(0.0, 1.0, 0.0);
+    vec3 right = cross(up, forward);
+    float focal_length = 0.5;
+    vec3 start_pos = eye_position + forward * focal_length + right * u + up * v;
+    vec3 direction = normalize(start_pos - eye_position);
+    vec3 color = ray_march(start_pos, direction);
+    gl_FragColor = vec4(color, 1.0);
+}
+```
+
 ## Rotate camera
 
 ## Normals and phong lightning

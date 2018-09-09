@@ -35,8 +35,13 @@ vec3 ray_march(vec3 start_pos, vec3 direction) {
 void main() {
     float u = vTexCoord.x - 1.0;
     float v = (vTexCoord.y - 1.0) / uAspect;
-    vec3 start_pos = vec3(u, v, -5.0);
-    vec3 direction = vec3(0.0, 0.0, 1.0);
+    vec3 eye_position = vec3(0.0, 0.0, -1.0);
+    vec3 forward = normalize(-eye_position);
+    vec3 up = vec3(0.0, 1.0, 0.0);
+    vec3 right = cross(up, forward);
+    float focal_length = 0.5;
+    vec3 start_pos = eye_position + forward * focal_length + right * u + up * v;
+    vec3 direction = normalize(start_pos - eye_position);
     vec3 color = ray_march(start_pos, direction);
     gl_FragColor = vec4(color, 1.0);
 }
