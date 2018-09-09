@@ -95,6 +95,27 @@ void main() {
 
 ## Rotate camera
 
+```glsl
+void main() {
+    float u = vTexCoord.x - 1.0;
+    float v = (vTexCoord.y - 1.0) / uAspect;
+    float eye_distance = 2.0;
+    float rotation_speed = 2.0;
+    vec3 eye_position = vec3(
+        sin(uTime * rotation_speed) * eye_distance,
+        1.0 + sin(uTime) * 0.2,
+        cos(uTime * rotation_speed) * eye_distance);
+    vec3 forward = normalize(-eye_position);
+    vec3 up = vec3(0.0, 1.0, 0.0);
+    vec3 right = cross(up, forward);
+    float focal_length = 1.0;
+    vec3 start_pos = eye_position + forward * focal_length + right * u + up * v;
+    vec3 direction = normalize(start_pos - eye_position);
+    vec3 color = ray_march(start_pos, direction);
+    gl_FragColor = vec4(color, 1.0);
+}
+```
+
 ## Normals and phong lightning
 
 ## Add plane
