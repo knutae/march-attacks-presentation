@@ -14,7 +14,8 @@ struct material {
 const material blue_sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 0.5, 1.0));
 const material green_sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 1.0, 0.5));
 const material red_sphere_material = material(0.1, 0.9, 0.8, 10.0, vec3(1.0, 0.5, 0.5));
-const material floor_material = material(0.1, 0.9, 0.8, 10.0, vec3(1.0));
+const material floor_material_1 = material(0.1, 0.9, 0.8, 10.0, vec3(1.0));
+const material floor_material_2 = material(0.1, 0.9, 0.8, 10.0, vec3(0.5));
 
 float origin_sphere(vec3 p, float radius) {
     return length(p) - radius;
@@ -48,12 +49,23 @@ void closest_material(inout float dist, inout material mat, float new_dist, mate
     }
 }
 
+material floor_material(vec3 p) {
+    float grid_size = 0.8;
+    float xmod = floor(mod(p.x / grid_size, 2.0));
+    float zmod = floor(mod(p.z / grid_size, 2.0));
+    if (mod(xmod + zmod, 2.0) < 1.0) {
+        return floor_material_1;
+    } else {
+        return floor_material_2;
+    }
+}
+
 material scene_material(vec3 p) {
     float dist = blue_sphere(p);
     material mat = blue_sphere_material;
     closest_material(dist, mat, green_sphere(p), green_sphere_material);
     closest_material(dist, mat, red_sphere(p), red_sphere_material);
-    closest_material(dist, mat, floor_plane(p), floor_material);
+    closest_material(dist, mat, floor_plane(p), floor_material(p));
     return mat;
 }
 
@@ -129,7 +141,7 @@ void main() {
     float u = vTexCoord.x - 1.0;
     float v = (vTexCoord.y - 1.0) / uAspect;
     float eye_distance = 2.0;
-    float rotation_speed = 2.0;
+    float rotation_speed = 1.0;
     vec3 eye_position = vec3(
         sin(uTime * rotation_speed) * eye_distance,
         1.0 + sin(uTime) * 0.2,
