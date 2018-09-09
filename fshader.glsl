@@ -100,6 +100,16 @@ float soft_shadow(vec3 p, vec3 light_direction, float sharpness) {
     return res;
 }
 
+vec3 blend(vec3 base_color, vec3 blend_color, float blend_amount) {
+    return base_color * (1.0 - blend_amount) + blend_color * blend_amount;
+}
+
+const vec3 background_color = vec3(0.8, 0.9, 1.0);
+
+vec3 apply_fog(vec3 color, float total_distance) {
+    return blend(color, background_color, min(1.0, total_distance / 10.0));
+}
+
 vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
     vec3 normal = estimate_normal(p);
     vec3 light_direction = normalize(vec3(-1.0));
@@ -126,9 +136,10 @@ void main() {
     vec3 start_pos = eye_position + forward * focal_length + right * u + up * v;
     vec3 direction = normalize(start_pos - eye_position);
     vec3 p = start_pos;
-    vec3 color = vec3(0.0);
+    vec3 color = background_color;
     if (ray_march(p, direction)) {
         color = phong_lighting(p, scene_material(p), direction);
+        color = apply_fog(color, length(p - start_pos));
     }
     gl_FragColor = vec4(color, 1.0);
 }

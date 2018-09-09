@@ -370,6 +370,28 @@ vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
 
 ## Fog
 
+Improve image quality by blending with a background color based on the distance from the focal plane.
+
+```glsl
+vec3 blend(vec3 base_color, vec3 blend_color, float blend_amount) {
+    return base_color * (1.0 - blend_amount) + blend_color * blend_amount;
+}
+
+const vec3 background_color = vec3(0.8, 0.9, 1.0);
+
+vec3 apply_fog(vec3 color, float total_distance) {
+    return blend(color, background_color, min(1.0, total_distance / 10.0));
+}
+```
+
+```glsl
+    vec3 color = background_color;
+    if (ray_march(p, direction)) {
+        color = phong_lighting(p, scene_material(p), direction);
+        color = apply_fog(color, length(p - start_pos));
+    }
+```
+
 ## Reflections
 
 ## More shapes
