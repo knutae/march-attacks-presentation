@@ -103,8 +103,13 @@ float repeated_boxes_x(vec3 p, vec3 dimensions, float corner_radius, float modul
     return origin_box(q, dimensions, corner_radius);
 }
 
+float repeated_boxes_xz(vec3 p, vec3 dimensions, float corner_radius, float modx, float modz) {
+    vec3 q = vec3(mod(p.x, modx) - 0.5 * modx, p.y, mod(p.z, modz) - 0.5 * modz);
+    return origin_box(q, dimensions, corner_radius);
+}
+
 float boxes(vec3 p) {
-    return repeated_boxes_x(p, vec3(0.25), 0.05, 1.0);
+    return repeated_boxes_xz(p, vec3(0.25), 0.05, 2.0, 1.0);
 }
 
 float scene(vec3 p) {
