@@ -508,6 +508,8 @@ vec3 apply_reflections(vec3 color, material mat, vec3 p, vec3 direction) {
 }
 ```
 
+This reflection algorithm does not account for fog and light reflections.
+
 ## Boxes
 
 Distance functions for boxes can be implemented using the absolute value of the position.
