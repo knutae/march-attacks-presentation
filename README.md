@@ -567,6 +567,40 @@ float red_sphere(vec3 p) { return sphere_at(p, vec3(0.6, -0.05, 0.0), 0.25); }
 float floor_plane(vec3 p) { return horizontal_plane(p, -0.3); }
 ```
 
+# Cylinders
+
+The distance function for a cylinder along an axis is similar to a sphere, just ignoring one of the dimensions. The resulting cylinder will stretch infinitely in the axis direction.
+
+```glsl
+float origin_cylinder_z(vec3 p, float radius) {
+    return length(p.xy) - radius;
+}
+
+float blue_sphere(vec3 p) { return origin_sphere(p, 0.3); }
+float blue_cylinder(vec3 p) { return origin_cylinder_z(p, 0.1); }
+float green_sphere(vec3 p) { return sphere_at(p, vec3(-0.6, -0.05, 0.0), 0.25); }
+float green_box(vec3 p) { return box_at(p, vec3(-0.6, -0.05, 0.0), vec3(0.15), 0.1); }
+float red_sphere(vec3 p) { return sphere_at(p, vec3(0.6, -0.05, 0.0), 0.25); }
+float floor_plane(vec3 p) { return horizontal_plane(p, -0.3); }
+
+float scene(vec3 p) {
+    float dist = blue_cylinder(p);
+    dist = min(dist, green_box(p));
+    dist = min(dist, red_sphere(p));
+    dist = min(dist, floor_plane(p));
+    return dist;
+}
+
+material scene_material(vec3 p) {
+    float dist = blue_cylinder(p);
+    material mat = blue_sphere_material;
+    closest_material(dist, mat, green_box(p), green_sphere_material);
+    closest_material(dist, mat, red_sphere(p), red_sphere_material);
+    closest_material(dist, mat, floor_plane(p), floor_material(p));
+    return mat;
+}
+```
+
 ## Other distance functions
 
 Mention torus, cylinder, etc.
