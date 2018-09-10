@@ -264,9 +264,9 @@ vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
 Calculate different materials by duplicating scene code. Not elegant, but works.
 
 ```glsl
-const material blue_sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 0.5, 1.0));
-const material green_sphere_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 1.0, 0.5));
-const material red_sphere_material = material(0.1, 0.9, 0.8, 10.0, vec3(1.0, 0.5, 0.5));
+const material blue_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 0.5, 1.0));
+const material green_material = material(0.1, 0.9, 0.8, 6.0, vec3(0.5, 1.0, 0.5));
+const material red_material = material(0.1, 0.9, 0.8, 10.0, vec3(1.0, 0.5, 0.5));
 
 float blue_sphere(vec3 p) { return origin_sphere(p, 0.3); }
 float green_sphere(vec3 p) { return sphere_at(p, vec3(-0.6, -0.05, 0.0), 0.25); }
@@ -288,9 +288,9 @@ void closest_material(inout float dist, inout material mat, float new_dist, mate
 
 material scene_material(vec3 p) {
     float dist = blue_sphere(p);
-    material mat = blue_sphere_material;
-    closest_material(dist, mat, green_sphere(p), green_sphere_material);
-    closest_material(dist, mat, red_sphere(p), red_sphere_material);
+    material mat = blue_material;
+    closest_material(dist, mat, green_sphere(p), green_material);
+    closest_material(dist, mat, red_sphere(p), red_material);
     return mat;
 }
 ```
@@ -320,9 +320,9 @@ float scene(vec3 p) {
 
 material scene_material(vec3 p) {
     float dist = blue_sphere(p);
-    material mat = blue_sphere_material;
-    closest_material(dist, mat, green_sphere(p), green_sphere_material);
-    closest_material(dist, mat, red_sphere(p), red_sphere_material);
+    material mat = blue_material;
+    closest_material(dist, mat, green_sphere(p), green_material);
+    closest_material(dist, mat, red_sphere(p), red_material);
     closest_material(dist, mat, floor_plane(p), floor_material);
     return mat;
 }
@@ -433,9 +433,9 @@ material floor_material(vec3 p) {
 
 material scene_material(vec3 p) {
     float dist = blue_sphere(p);
-    material mat = blue_sphere_material;
-    closest_material(dist, mat, green_sphere(p), green_sphere_material);
-    closest_material(dist, mat, red_sphere(p), red_sphere_material);
+    material mat = blue_material;
+    closest_material(dist, mat, green_sphere(p), green_material);
+    closest_material(dist, mat, red_sphere(p), red_material);
     closest_material(dist, mat, floor_plane(p), floor_material(p));
     return mat;
 }
@@ -455,7 +455,7 @@ struct material {
     vec3 color;
 };
 
-const material blue_sphere_material = material(0.1, 0.9, 0.8, 6.0, 0.3, vec3(0.5, 0.5, 1.0));
+const material blue_material = material(0.1, 0.9, 0.8, 6.0, 0.3, vec3(0.5, 0.5, 1.0));
 ```
 
 ```glsl
@@ -538,9 +538,9 @@ float scene(vec3 p) {
 
 material scene_material(vec3 p) {
     float dist = blue_sphere(p);
-    material mat = blue_sphere_material;
-    closest_material(dist, mat, green_box(p), green_sphere_material);
-    closest_material(dist, mat, red_sphere(p), red_sphere_material);
+    material mat = blue_material;
+    closest_material(dist, mat, green_box(p), green_material);
+    closest_material(dist, mat, red_sphere(p), red_material);
     closest_material(dist, mat, floor_plane(p), floor_material(p));
     return mat;
 }
@@ -593,9 +593,9 @@ float scene(vec3 p) {
 
 material scene_material(vec3 p) {
     float dist = blue_cylinder(p);
-    material mat = blue_sphere_material;
-    closest_material(dist, mat, green_box(p), green_sphere_material);
-    closest_material(dist, mat, red_sphere(p), red_sphere_material);
+    material mat = blue_material;
+    closest_material(dist, mat, green_box(p), green_material);
+    closest_material(dist, mat, red_sphere(p), red_material);
     closest_material(dist, mat, floor_plane(p), floor_material(p));
     return mat;
 }
@@ -628,9 +628,9 @@ float scene(vec3 p) {
 
 material scene_material(vec3 p) {
     float dist = blue_csg(p);
-    material mat = blue_sphere_material;
-    closest_material(dist, mat, green_box(p), green_sphere_material);
-    closest_material(dist, mat, red_sphere(p), red_sphere_material);
+    material mat = blue_material;
+    closest_material(dist, mat, green_box(p), green_material);
+    closest_material(dist, mat, red_sphere(p), red_material);
     closest_material(dist, mat, floor_plane(p), floor_material(p));
     return mat;
 }
