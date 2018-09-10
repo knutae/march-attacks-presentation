@@ -47,9 +47,13 @@ float csg_union(float dist1, float dist2) {
     return min(dist1, dist2);
 }
 
+float csg_intersection(float dist1, float dist2) {
+    return max(dist1, dist2);
+}
+
 float blue_sphere(vec3 p) { return origin_sphere(p, 0.3); }
-float blue_cylinder(vec3 p) { return origin_cylinder_z(p, 0.1); }
-float blue_csg(vec3 p) { return csg_union(blue_sphere(p), blue_cylinder(p)); }
+float blue_cylinder(vec3 p) { return origin_cylinder_z(p, 0.2); }
+float blue_csg(vec3 p) { return csg_intersection(blue_sphere(p), blue_cylinder(p)); }
 float green_sphere(vec3 p) { return sphere_at(p, vec3(-0.6, -0.05, 0.0), 0.25); }
 float green_box(vec3 p) { return box_at(p, vec3(-0.6, -0.05, 0.0), vec3(0.15), 0.1); }
 float red_sphere(vec3 p) { return sphere_at(p, vec3(0.6, -0.05, 0.0), 0.25); }

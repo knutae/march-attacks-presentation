@@ -636,6 +636,18 @@ material scene_material(vec3 p) {
 }
 ```
 
+Intersection simply uses the maximum instead.
+
+```glsl
+float csg_intersection(float dist1, float dist2) {
+    return max(dist1, dist2);
+}
+
+float blue_sphere(vec3 p) { return origin_sphere(p, 0.3); }
+float blue_cylinder(vec3 p) { return origin_cylinder_z(p, 0.2); }
+float blue_csg(vec3 p) { return csg_intersection(blue_sphere(p), blue_cylinder(p)); }
+```
+
 Union, intersect, difference.
 
 ## Repeated geometry
