@@ -443,6 +443,45 @@ material scene_material(vec3 p) {
 
 ## Reflections
 
+Add a single iteration of reflections.
+
+```glsl
+struct material {
+    float ambient;
+    float diffuse;
+    float specular;
+    float shininess;
+    float reflection;
+    vec3 color;
+};
+
+const material blue_sphere_material = material(0.1, 0.9, 0.8, 6.0, 0.3, vec3(0.5, 0.5, 1.0));
+```
+
+```glsl
+vec3 apply_reflections(vec3 color, material mat, vec3 p, vec3 direction) {
+    if (mat.reflection <= 0.0) {
+        return color;
+    }
+    vec3 reflection_color = background_color;
+    direction = ray_reflection(direction, estimate_normal(p));
+    p += 0.1 * direction;
+    if (ray_march(p, direction)) {
+        reflection_color = phong_lighting(p, scene_material(p), direction);
+    }
+    return blend(color, reflection_color, mat.reflection);
+}
+```
+
+```glsl
+    if (ray_march(p, direction)) {
+        material mat = scene_material(p);
+        color = phong_lighting(p, mat, direction);
+        color = apply_reflections(color, mat, p, direction);
+        color = apply_fog(color, length(p - start_pos));
+    }
+```
+
 ## More shapes
 
 Show: Box, round box. Mention torus, cylinder, etc.
