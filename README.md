@@ -508,9 +508,49 @@ vec3 apply_reflections(vec3 color, material mat, vec3 p, vec3 direction) {
 }
 ```
 
-## More shapes
+## Boxes
 
-Show: Box, round box. Mention torus, cylinder, etc.
+Distance functions for boxes can be implemented using the absolute value of the position.
+
+```glsl
+float origin_box(vec3 p, vec3 dimensions) {
+    vec3 a = abs(p);
+    return length(max(abs(p) - dimensions, 0.0));
+}
+
+float box_at(vec3 p, vec3 centre, vec3 dimensions) {
+    return origin_box(p - centre, dimensions);
+}
+
+float blue_sphere(vec3 p) { return origin_sphere(p, 0.3); }
+float green_sphere(vec3 p) { return sphere_at(p, vec3(-0.6, -0.05, 0.0), 0.25); }
+float green_box(vec3 p) { return box_at(p, vec3(-0.6, -0.05, 0.0), vec3(0.25)); }
+float red_sphere(vec3 p) { return sphere_at(p, vec3(0.6, -0.05, 0.0), 0.25); }
+float floor_plane(vec3 p) { return horizontal_plane(p, -0.3); }
+
+float scene(vec3 p) {
+    float dist = blue_sphere(p);
+    dist = min(dist, green_box(p));
+    dist = min(dist, red_sphere(p));
+    dist = min(dist, floor_plane(p));
+    return dist;
+}
+
+material scene_material(vec3 p) {
+    float dist = blue_sphere(p);
+    material mat = blue_sphere_material;
+    closest_material(dist, mat, green_box(p), green_sphere_material);
+    closest_material(dist, mat, red_sphere(p), red_sphere_material);
+    closest_material(dist, mat, floor_plane(p), floor_material(p));
+    return mat;
+}
+```
+
+This distance function does not give negative values for positions inside the box. This can be fixed, but is not needed for our example.
+
+## Other distance functions
+
+Mention torus, cylinder, etc.
 
 ## Constructive Solid Geometry
 

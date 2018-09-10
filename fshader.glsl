@@ -30,14 +30,24 @@ float horizontal_plane(vec3 p, float height) {
     return p.y - height;
 }
 
+float origin_box(vec3 p, vec3 dimensions) {
+    vec3 a = abs(p);
+    return length(max(abs(p) - dimensions, 0.0));
+}
+
+float box_at(vec3 p, vec3 centre, vec3 dimensions) {
+    return origin_box(p - centre, dimensions);
+}
+
 float blue_sphere(vec3 p) { return origin_sphere(p, 0.3); }
 float green_sphere(vec3 p) { return sphere_at(p, vec3(-0.6, -0.05, 0.0), 0.25); }
+float green_box(vec3 p) { return box_at(p, vec3(-0.6, -0.05, 0.0), vec3(0.25)); }
 float red_sphere(vec3 p) { return sphere_at(p, vec3(0.6, -0.05, 0.0), 0.25); }
 float floor_plane(vec3 p) { return horizontal_plane(p, -0.3); }
 
 float scene(vec3 p) {
     float dist = blue_sphere(p);
-    dist = min(dist, green_sphere(p));
+    dist = min(dist, green_box(p));
     dist = min(dist, red_sphere(p));
     dist = min(dist, floor_plane(p));
     return dist;
@@ -64,7 +74,7 @@ material floor_material(vec3 p) {
 material scene_material(vec3 p) {
     float dist = blue_sphere(p);
     material mat = blue_sphere_material;
-    closest_material(dist, mat, green_sphere(p), green_sphere_material);
+    closest_material(dist, mat, green_box(p), green_sphere_material);
     closest_material(dist, mat, red_sphere(p), red_sphere_material);
     closest_material(dist, mat, floor_plane(p), floor_material(p));
     return mat;
