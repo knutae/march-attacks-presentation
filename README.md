@@ -601,11 +601,40 @@ material scene_material(vec3 p) {
 }
 ```
 
-## Other distance functions
-
-Mention torus, cylinder, etc.
-
 ## Constructive Solid Geometry
+
+[Constructive solid geometry (CSG)](https://en.wikipedia.org/wiki/Constructive_solid_geometry) is a way to combine 3D objects into more complex objects.
+
+Union uses the minimum, which is the same as we have already used to create the scene.
+
+```glsl
+float csg_union(float dist1, float dist2) {
+    return min(dist1, dist2);
+}
+
+float blue_sphere(vec3 p) { return origin_sphere(p, 0.3); }
+float blue_cylinder(vec3 p) { return origin_cylinder_z(p, 0.1); }
+float blue_csg(vec3 p) { return csg_union(blue_sphere(p), blue_cylinder(p)); }
+```
+
+```glsl
+float scene(vec3 p) {
+    float dist = blue_csg(p);
+    dist = min(dist, green_box(p));
+    dist = min(dist, red_sphere(p));
+    dist = min(dist, floor_plane(p));
+    return dist;
+}
+
+material scene_material(vec3 p) {
+    float dist = blue_csg(p);
+    material mat = blue_sphere_material;
+    closest_material(dist, mat, green_box(p), green_sphere_material);
+    closest_material(dist, mat, red_sphere(p), red_sphere_material);
+    closest_material(dist, mat, floor_plane(p), floor_material(p));
+    return mat;
+}
+```
 
 Union, intersect, difference.
 
