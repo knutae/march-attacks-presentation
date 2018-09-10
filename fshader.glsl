@@ -51,9 +51,13 @@ float csg_intersection(float dist1, float dist2) {
     return max(dist1, dist2);
 }
 
+float csg_subtraction(float dist1, float dist2) {
+    return max(dist1, -dist2);
+}
+
 float blue_sphere(vec3 p) { return origin_sphere(p, 0.3); }
 float blue_cylinder(vec3 p) { return origin_cylinder_z(p, 0.2); }
-float blue_csg(vec3 p) { return csg_intersection(blue_sphere(p), blue_cylinder(p)); }
+float blue_csg(vec3 p) { return csg_subtraction(blue_sphere(p), blue_cylinder(p)); }
 float green_sphere(vec3 p) { return sphere_at(p, vec3(-0.6, -0.05, 0.0), 0.25); }
 float green_box(vec3 p) { return box_at(p, vec3(-0.6, -0.05, 0.0), vec3(0.15), 0.1); }
 float red_sphere(vec3 p) { return sphere_at(p, vec3(0.6, -0.05, 0.0), 0.25); }
@@ -96,9 +100,9 @@ material scene_material(vec3 p) {
 
 bool ray_march(inout vec3 p, vec3 direction) {
     float total_dist = 0.0;
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 200; i++) {
         float dist = scene(p);
-        if (dist < 0.01) {
+        if (dist < 0.001) {
             return true;
         }
         total_dist += dist;
@@ -111,7 +115,7 @@ bool ray_march(inout vec3 p, vec3 direction) {
 }
 
 vec3 estimate_normal(vec3 p) {
-    float epsilon = 0.01;
+    float epsilon = 0.001;
     return normalize(vec3(
         scene(vec3(p.x + epsilon, p.y, p.z)) - scene(vec3(p.x - epsilon, p.y, p.z)),
         scene(vec3(p.x, p.y + epsilon, p.z)) - scene(vec3(p.x, p.y - epsilon, p.z)),
