@@ -664,4 +664,30 @@ float blue_csg(vec3 p) { return csg_subtraction(blue_sphere(p), blue_cylinder(p)
 
 ## Repeated geometry
 
+Repeated geometry can be created by using modulo of the position in one or more axes.
+
+```glsl
+float repeated_boxes_x(vec3 p, vec3 dimensions, float corner_radius, float modulo) {
+    vec3 q = vec3(mod(p.x, modulo) - 0.5 * modulo, p.yz);
+    return origin_box(q, dimensions, corner_radius);
+}
+
+float boxes(vec3 p) {
+    return repeated_boxes_x(p, vec3(0.25), 0.05, 1.0);
+}
+
+float scene(vec3 p) {
+    float dist = boxes(p);
+    dist = min(dist, floor_plane(p));
+    return dist;
+}
+
+material scene_material(vec3 p) {
+    float dist = boxes(p);
+    material mat = blue_material;
+    closest_material(dist, mat, floor_plane(p), floor_material(p));
+    return mat;
+}
+```
+
 ## Combine repetition and CSG

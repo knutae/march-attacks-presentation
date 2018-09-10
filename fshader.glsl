@@ -63,7 +63,7 @@ float green_box(vec3 p) { return box_at(p, vec3(-0.6, -0.05, 0.0), vec3(0.15), 0
 float red_sphere(vec3 p) { return sphere_at(p, vec3(0.6, -0.05, 0.0), 0.25); }
 float floor_plane(vec3 p) { return horizontal_plane(p, -0.3); }
 
-float scene(vec3 p) {
+float old_scene(vec3 p) {
     float dist = blue_csg(p);
     dist = min(dist, green_box(p));
     dist = min(dist, red_sphere(p));
@@ -89,11 +89,33 @@ material floor_material(vec3 p) {
     }
 }
 
-material scene_material(vec3 p) {
+material old_scene_material(vec3 p) {
     float dist = blue_csg(p);
     material mat = blue_material;
     closest_material(dist, mat, green_box(p), green_material);
     closest_material(dist, mat, red_sphere(p), red_material);
+    closest_material(dist, mat, floor_plane(p), floor_material(p));
+    return mat;
+}
+
+float repeated_boxes_x(vec3 p, vec3 dimensions, float corner_radius, float modulo) {
+    vec3 q = vec3(mod(p.x, modulo) - 0.5 * modulo, p.yz);
+    return origin_box(q, dimensions, corner_radius);
+}
+
+float boxes(vec3 p) {
+    return repeated_boxes_x(p, vec3(0.25), 0.05, 1.0);
+}
+
+float scene(vec3 p) {
+    float dist = boxes(p);
+    dist = min(dist, floor_plane(p));
+    return dist;
+}
+
+material scene_material(vec3 p) {
+    float dist = boxes(p);
+    material mat = blue_material;
     closest_material(dist, mat, floor_plane(p), floor_material(p));
     return mat;
 }
@@ -195,7 +217,7 @@ void main() {
     float rotation_speed = 1.0;
     vec3 eye_position = vec3(
         sin(uTime * rotation_speed) * eye_distance,
-        1.0 + sin(uTime) * 0.2,
+        1.5 + sin(uTime) * 0.2,
         cos(uTime * rotation_speed) * eye_distance);
     vec3 forward = normalize(-eye_position);
     vec3 up = vec3(0.0, 1.0, 0.0);
