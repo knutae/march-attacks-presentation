@@ -465,7 +465,7 @@ vec3 apply_reflections(vec3 color, material mat, vec3 p, vec3 direction) {
     }
     vec3 reflection_color = background_color;
     direction = ray_reflection(direction, estimate_normal(p));
-    p += 0.1 * direction;
+    p += 0.05 * direction;
     if (ray_march(p, direction)) {
         reflection_color = phong_lighting(p, scene_material(p), direction);
     }
@@ -480,6 +480,32 @@ vec3 apply_reflections(vec3 color, material mat, vec3 p, vec3 direction) {
         color = apply_reflections(color, mat, p, direction);
         color = apply_fog(color, length(p - start_pos));
     }
+```
+
+Multiple levels of reflections must be implemented without recursion in the shader. Use a for loop and multiply the reflection for each material to reduce the effect for each step.
+
+```glsl
+vec3 apply_reflections(vec3 color, material mat, vec3 p, vec3 direction) {
+    float reflection = mat.reflection;
+    for (int i = 0; i < 5; i++) {
+        if (reflection <= 0.01) {
+            break;
+        }
+        vec3 reflection_color = background_color;
+        direction = ray_reflection(direction, estimate_normal(p));
+        p += 0.05 * direction;
+        if (ray_march(p, direction)) {
+            reflection_color = phong_lighting(p, scene_material(p), direction);
+            color = blend(color, reflection_color, reflection);
+            mat = scene_material(p);
+            reflection *= mat.reflection;
+        } else {
+            color = blend(color, reflection_color, reflection);
+            break;
+        }
+    }
+    return color;
+}
 ```
 
 ## More shapes
