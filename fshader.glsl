@@ -148,7 +148,8 @@ void main() {
         cos(uTime * rotation_speed) * eye_distance);
     vec3 forward = normalize(-eye_position);
     vec3 up = vec3(0.0, 1.0, 0.0);
-    vec3 right = cross(up, forward);
+    vec3 right = normalize(cross(up, forward));
+    up = cross(-right, forward);
     float focal_length = 1.0;
     vec3 start_pos = eye_position + forward * focal_length + right * u + up * v;
     vec3 direction = normalize(start_pos - eye_position);

@@ -116,6 +116,15 @@ void main() {
 }
 ```
 
+The up vector is a bit off when the camera is not horizontal. This also makes the length of the right vector a bit off. Let's fix both issues.
+
+```glsl
+    vec3 forward = normalize(-eye_position);
+    vec3 up = vec3(0.0, 1.0, 0.0);
+    vec3 right = normalize(cross(up, forward));
+    up = cross(-right, forward);
+```
+
 ## Normals and phong lightning
 
 Quickly explain the [Phong lighting model](https://en.wikipedia.org/wiki/Phong_reflection_model).
