@@ -71,7 +71,7 @@ material scene_material(vec3 p) {
 
 bool ray_march(inout vec3 p, vec3 direction) {
     float total_dist = 0.0;
-    for (int i = 0; i < 40; i++) {
+    for (int i = 0; i < 100; i++) {
         float dist = scene(p);
         if (dist < 0.01) {
             return true;
