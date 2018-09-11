@@ -726,3 +726,30 @@ Everything looks darker, but that is due to the shadows and light direction. Tun
 The limitations of the reflection algorithms are also more visible now.
 
 ## Combine repetition and CSG
+
+Combine different techniques to produce fancier objects. Subtract repeated cubes from a sphere.
+
+```glsl
+float fancy_object(vec3 p) {
+    return csg_subtraction(
+        origin_sphere(p, 1.0),
+        repeated_boxes_xyz(p, vec3(0.09), 0.01, vec3(0.25)));
+}
+
+float new_plane(vec3 p) {
+    return horizontal_plane(p, -1.0);
+}
+
+float scene(vec3 p) {
+    float dist = fancy_object(p);
+    dist = min(dist, new_plane(p));
+    return dist;
+}
+
+material scene_material(vec3 p) {
+    float dist = origin_sphere(p, 1.0); // optimization
+    material mat = blue_material;
+    closest_material(dist, mat, new_plane(p), floor_material(p));
+    return mat;
+}
+```

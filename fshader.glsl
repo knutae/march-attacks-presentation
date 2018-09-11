@@ -117,16 +117,26 @@ float boxes(vec3 p) {
     return repeated_boxes_xyz(p, vec3(0.25), 0.05, vec3(3.0, 0.8, 3.0));
 }
 
+float fancy_object(vec3 p) {
+    return csg_subtraction(
+        origin_sphere(p, 1.0),
+        repeated_boxes_xyz(p, vec3(0.09), 0.01, vec3(0.25)));
+}
+
+float new_plane(vec3 p) {
+    return horizontal_plane(p, -1.0);
+}
+
 float scene(vec3 p) {
-    float dist = boxes(p);
-    dist = min(dist, floor_plane(p));
+    float dist = fancy_object(p);
+    dist = min(dist, new_plane(p));
     return dist;
 }
 
 material scene_material(vec3 p) {
-    float dist = boxes(p);
+    float dist = origin_sphere(p, 1.0); // optimization
     material mat = blue_material;
-    closest_material(dist, mat, floor_plane(p), floor_material(p));
+    closest_material(dist, mat, new_plane(p), floor_material(p));
     return mat;
 }
 
