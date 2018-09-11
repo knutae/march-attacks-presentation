@@ -703,4 +703,26 @@ float boxes(vec3 p) {
 }
 ```
 
+Three axes:
+
+```glsl
+float repeated_boxes_xyz(vec3 p, vec3 dimensions, float corner_radius, vec3 modulo) {
+    vec3 q = mod(p - 0.5 * modulo, modulo) - 0.5 * modulo;
+    return origin_box(q, dimensions, corner_radius);
+}
+
+float boxes(vec3 p) {
+    return repeated_boxes_xyz(p, vec3(0.25), 0.05, vec3(3.0, 0.8, 3.0));
+}
+```
+
+Everything looks darker, but that is due to the shadows and light direction. Tune the light direction and shadow softness to improve this.
+
+```glsl
+    vec3 light_direction = normalize(vec3(-0.3, -1.0, -0.5));
+    float shadow = soft_shadow(p, -light_direction, 20.0);
+```
+
+The limitations of the reflection algorithms are also more visible now.
+
 ## Combine repetition and CSG

@@ -108,8 +108,13 @@ float repeated_boxes_xz(vec3 p, vec3 dimensions, float corner_radius, float modx
     return origin_box(q, dimensions, corner_radius);
 }
 
+float repeated_boxes_xyz(vec3 p, vec3 dimensions, float corner_radius, vec3 modulo) {
+    vec3 q = mod(p - 0.5 * modulo, modulo) - 0.5 * modulo;
+    return origin_box(q, dimensions, corner_radius);
+}
+
 float boxes(vec3 p) {
-    return repeated_boxes_xz(p, vec3(0.25), 0.05, 2.0, 1.0);
+    return repeated_boxes_xyz(p, vec3(0.25), 0.05, vec3(3.0, 0.8, 3.0));
 }
 
 float scene(vec3 p) {
@@ -185,8 +190,8 @@ vec3 apply_fog(vec3 color, float total_distance) {
 
 vec3 phong_lighting(vec3 p, material mat, vec3 ray_direction) {
     vec3 normal = estimate_normal(p);
-    vec3 light_direction = normalize(vec3(-1.0));
-    float shadow = soft_shadow(p, -light_direction, 5.0);
+    vec3 light_direction = normalize(vec3(-0.3, -1.0, -0.5));
+    float shadow = soft_shadow(p, -light_direction, 20.0);
     float diffuse = max(0.0, mat.diffuse * dot(normal, -light_direction)) * shadow;
     vec3 reflection = ray_reflection(ray_direction, normal);
     float specular = pow(max(0.0, mat.specular * dot(reflection, -light_direction)), mat.shininess) * shadow;
@@ -222,7 +227,7 @@ void main() {
     float rotation_speed = 1.0;
     vec3 eye_position = vec3(
         sin(uTime * rotation_speed) * eye_distance,
-        1.5 + sin(uTime) * 0.2,
+        1.0 + sin(uTime) * 0.2,
         cos(uTime * rotation_speed) * eye_distance);
     vec3 forward = normalize(-eye_position);
     vec3 up = vec3(0.0, 1.0, 0.0);
