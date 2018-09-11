@@ -118,8 +118,11 @@ float boxes(vec3 p) {
 }
 
 float fancy_object(vec3 p) {
-    return csg_subtraction(
+    float hollow_sphere = csg_subtraction(
         origin_sphere(p, 1.0),
+        origin_sphere(p, 0.95));
+    return csg_subtraction(
+        hollow_sphere,
         repeated_boxes_xyz(p, vec3(0.09), 0.01, vec3(0.25)));
 }
 
