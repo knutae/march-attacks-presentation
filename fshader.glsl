@@ -128,12 +128,21 @@ float fancy_object(vec3 p) {
         repeated_boxes_xyz(p, vec3(grid_size * 0.4), grid_size * 0.05, vec3(grid_size)));
 }
 
+float twisted_object(vec3 p) {
+    float amount = sin(uTime * 0.5) * 2.0;
+    float c = cos(amount * p.y);
+    float s = sin(amount * p.y);
+    mat2 m = mat2(c, -s, s, c);
+    vec3 q = vec3(m * p.xz, p.y);
+    return fancy_object(q);
+}
+
 float new_plane(vec3 p) {
     return horizontal_plane(p, -1.0);
 }
 
 float scene(vec3 p) {
-    float dist = fancy_object(p);
+    float dist = twisted_object(p);
     dist = min(dist, new_plane(p));
     return dist;
 }

@@ -781,3 +781,16 @@ float fancy_object(vec3 p) {
         repeated_boxes_xyz(p, vec3(grid_size * 0.4), grid_size * 0.05, vec3(grid_size)));
 }
 ```
+
+Add a twist, from example given by [Ingio Quiles](http://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm).
+
+```glsl
+float twisted_object(vec3 p) {
+    float amount = sin(uTime * 0.5) * 2.0;
+    float c = cos(amount * p.y);
+    float s = sin(amount * p.y);
+    mat2 m = mat2(c, -s, s, c);
+    vec3 q = vec3(m * p.xz, p.y);
+    return fancy_object(q);
+}
+```
