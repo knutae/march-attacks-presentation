@@ -766,3 +766,18 @@ float fancy_object(vec3 p) {
         repeated_boxes_xyz(p, vec3(0.09), 0.01, vec3(0.25)));
 }
 ```
+
+Animate the size of the sphere and the boxes.
+
+```glsl
+float fancy_object(vec3 p) {
+    float sphere_size = 1.0 + 0.5 * sin(3.0 * uTime);
+    float hollow_sphere = csg_subtraction(
+        origin_sphere(p, sphere_size),
+        origin_sphere(p, sphere_size * 0.95));
+    float grid_size = 0.2 + 0.1 * cos(uTime);
+    return csg_subtraction(
+        hollow_sphere,
+        repeated_boxes_xyz(p, vec3(grid_size * 0.4), grid_size * 0.05, vec3(grid_size)));
+}
+```

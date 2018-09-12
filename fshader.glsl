@@ -118,12 +118,14 @@ float boxes(vec3 p) {
 }
 
 float fancy_object(vec3 p) {
+    float sphere_size = 1.0 + 0.5 * sin(3.21 * uTime);
     float hollow_sphere = csg_subtraction(
-        origin_sphere(p, 1.0),
-        origin_sphere(p, 0.95));
+        origin_sphere(p, sphere_size),
+        origin_sphere(p, sphere_size * 0.95));
+    float grid_size = 0.2 + 0.1 * cos(uTime);
     return csg_subtraction(
         hollow_sphere,
-        repeated_boxes_xyz(p, vec3(0.09), 0.01, vec3(0.25)));
+        repeated_boxes_xyz(p, vec3(grid_size * 0.4), grid_size * 0.05, vec3(grid_size)));
 }
 
 float new_plane(vec3 p) {
@@ -236,7 +238,7 @@ vec3 apply_reflections(vec3 color, material mat, vec3 p, vec3 direction) {
 void main() {
     float u = vTexCoord.x - 1.0;
     float v = (vTexCoord.y - 1.0) / uAspect;
-    float eye_distance = 2.0;
+    float eye_distance = 3.0;
     float rotation_speed = 1.0;
     vec3 eye_position = vec3(
         sin(uTime * rotation_speed) * eye_distance,
