@@ -652,7 +652,7 @@ float blue_csg(vec3 p) { return csg_intersection(blue_sphere(p), blue_cylinder(p
 
 Subtraction is done by negating one of the distance functions and then taking the maximum. Imagine invering the shape to be subtracted, swapping the inside and outside of the shape, then taking the intersection.
 
-```
+```glsl
 float csg_subtraction(float dist1, float dist2) {
     return max(dist1, -dist2);
 }
