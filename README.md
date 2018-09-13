@@ -1,12 +1,12 @@
-# Raymarching with shaders
+# Ray marching with shaders
 
 ## Introduction
 
-Explain raytracing basics. Explain raymarching with distance fields. Whiteboard.
+Explain ray tracing basics. Explain ray marching with distance fields, or sphere tracing. Whiteboard.
 
 ## Skeleton project for WebGL
 
-Prepared in advance. Explain a bit.
+Prepared in advance.
 
 ```glsl
 precision mediump float;
@@ -25,7 +25,7 @@ void main() {
 
 ## First example
 
-Raymarched sphere with orthographic projection.
+Ray marched sphere with orthographic projection.
 
 ```glsl
 float origin_sphere(vec3 p, float radius) {
