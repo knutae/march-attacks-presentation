@@ -794,3 +794,15 @@ float twisted_object(vec3 p) {
     return fancy_object(q);
 }
 ```
+
+## References
+
+[Raymarching Distance Fields](http://9bitscience.blogspot.com/2013/07/raymarching-distance-fields_14.html) by Simen Haugo
+
+[Distance functions](http://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm) by Íñigo Quílez.
+
+[Ray Marching and Signed Distance Functions](http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions/) by Jamie Wong.
+
+[NVIDIA GPU Gems 2, Chapter 8](https://developer.nvidia.com/gpugems/GPUGems2/gpugems2_chapter08.html). Per-Pixel Displacement Mapping with Distance Functions, by William Donnelly
+
+[Shadertoy](https://www.shadertoy.com/). Search for ray marching, or just browse.
